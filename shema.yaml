@@ -1,0 +1,119 @@
+type: object
+required:
+  - baza_podatkov
+  - gpg
+  - distribucija
+  - rotacija
+  - dnevnik
+
+properties:
+  baza_podatkov:
+    type: object
+    required:
+      - gostitelj
+      - uporabnisko_ime
+      - geslo
+      - ime_baze
+    properties:
+      gostitelj:
+        type: string
+      vrata:
+        type: integer
+        default: 3306
+      uporabnisko_ime:
+        type: string
+      geslo:
+        type: string
+      ime_baze:
+        type: string
+
+  gpg:
+    type: object
+    required:
+      - email_prejemnika
+    properties:
+      email_prejemnika:
+        type: string
+
+  poti:
+    type: object
+    properties:
+      varnostne_kopije:
+        type: string
+        default: "./varnostne_kopije"
+      dnevniki:
+        type: string
+        default: "./dnevniki"
+
+  distribucija:
+    type: object
+    properties:
+      email:
+        type: object
+        properties:
+          omogoceno:
+            type: boolean
+          smtp_streznik:
+            type: string
+          smtp_vrata:
+            type: integer
+          uporabnisko_ime:
+            type: string
+          geslo:
+            type: string
+          od:
+            type: string
+          za:
+            type: string
+
+      sftp:
+        type: object
+        properties:
+          omogoceno:
+            type: boolean
+          gostitelj:
+            type: string
+          vrata:
+            type: integer
+          uporabnisko_ime:
+            type: string
+          geslo:
+            type: string
+          pot:
+            type: string
+
+      aws_s3:
+        type: object
+        properties:
+          omogoceno:
+            type: boolean
+          vedro:
+            type: string
+          regija:
+            type: string
+          dostopni_kljuc:
+            type: string
+          skrivni_kljuc:
+            type: string
+
+  rotacija:
+    type: object
+    properties:
+      dnevne:
+        type: integer
+        default: 7
+      tedenske:
+        type: integer
+        default: 4
+      mesecne:
+        type: integer
+        default: 6
+
+  dnevnik:
+    type: object
+    properties:
+      oddaljeno_poshiljanje:
+        type: boolean
+        default: false
+      oddaljena_pot:
+        type: string
