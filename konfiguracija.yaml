@@ -287,7 +287,7 @@ class VarnostnoKopiranje:
                              "NAPAKA")
 
     def izvedi(self):
-        # Nastavi dnevnik
+ 
         pot_dnevnika = self.config['poti']['dnevniki']
         self.ime_dnevnika = nastavi_dnevnik(pot_dnevnika)
 
