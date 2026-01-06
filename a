@@ -1,0 +1,140 @@
+1. Odpri terminal
+Pritisni Ctrl + Alt + T ali odpri terminal preko menija.
+2. Namesti potrebna orodja
+bash# Namesti MySQL, GPG in Python
+sudo dnf install mysql-server gnupg2 python3-pip -y
+
+# Zaženi MySQL servis
+sudo systemctl start mysqld
+sudo systemctl enable mysqld
+
+# Nastavi MySQL root geslo (če še ni nastavljeno)
+sudo mysql_secure_installation
+3. Ustvari testno MySQL bazo
+bash# Prijavi se v MySQL
+mysql -u root -p
+
+# V MySQL konzoli vnesi:
+CREATE DATABASE testna_baza;
+CREATE USER 'test_uporabnik'@'localhost' IDENTIFIED BY 'test_geslo123';
+GRANT ALL PRIVILEGES ON testna_baza.* TO 'test_uporabnik'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+4. Ustvari GPG ključ
+bash# Ustvari GPG ključ za šifriranje
+gpg --full-generate-key
+Ko te vpraša:
+
+Vrsta ključa: Izberi (1) RSA and RSA
+Velikost: 4096
+Veljavnost: 0 (ne poteče)
+Ime: MySQL Backup
+Email: backup@example.com (lahko poljuben)
+Geslo: Nastavi si geslo (zapomni si ga!)
+
+Preveri GPG ključ:
+bashgpg --list-keys
+# Zapiši si email, ki si ga uporabil (potrebuješ ga kasneje)
+5. Ustvari projektno mapo
+bash# Pojdi v domačo mapo
+cd ~
+
+# Ustvari glavno mapo projekta
+mkdir mysql-varnostno-kopiranje
+cd mysql-varnostno-kopiranje
+
+# Ustvari podmape
+mkdir -p nastavitve skripta dnevniki varnostne_kopije
+6. Ustvari datoteke
+A) zahteve.txt
+bashnano zahteve.txt
+```
+Kopiraj vsebino:
+```
+PyYAML==6.0.1
+paramiko==3.4.0
+boto3==1.34.0
+jsonschema==4.20.0
+Shrani: Ctrl + O, Enter, Ctrl + X
+B) nastavitve/shema.yaml
+bashnano nastavitve/shema.yaml
+Kopiraj celotno vsebino iz koraka 3.2 zgoraj, shrani in zapri.
+C) nastavitve/konfiguracija.yaml
+bashnano nastavitve/konfiguracija.yaml
+Kopiraj vsebino iz koraka 3.3, POMEMBNO - spremeni:
+yamlbaza_podatkov:
+  gostitelj: "localhost"
+  vrata: 3306
+  uporabnisko_ime: "test_uporabnik"
+  geslo: "test_geslo123"
+  ime_baze: "testna_baza"
+
+gpg:
+  email_prejemnika: "backup@example.com"  # Tvoj GPG email!
+
+distribucija:
+  email:
+    omogoceno: false  # Začasno onemogoči email
+  sftp:
+    omogoceno: false  # Začasno onemogoči SFTP
+  aws_s3:
+    omogoceno: false  # Začasno onemogoči S3
+D) skripta/pomocne_funkcije.py
+bashnano skripta/pomocne_funkcije.py
+Kopiraj celotno vsebino iz koraka 3.4, shrani in zapri.
+E) skripta/varnostno_kopiranje.py
+bashnano skripta/varnostno_kopiranje.py
+Kopiraj celotno vsebino iz koraka 3.5, shrani in zapri.
+F) skripta/obnova.py
+bashnano skripta/obnova.py
+Kopiraj celotno vsebino iz koraka 3.6, shrani in zapri.
+7. Namesti Python pakete
+bashpip3 install -r zahteve.txt --user
+8. Nastavi izvršilne pravice
+bashchmod +x skripta/*.py
+9. TESTIRANJE - Zaženi varnostno kopiranje
+bash# Preveri strukturo
+ls -R
+
+# Zaženi varnostno kopiranje
+python3 skripta/varnostno_kopiranje.py
+```
+
+**Pričakovan izpis:**
+```
+✓ Konfiguracija uspešno naložena in validirana
+✓ Vsa potrebna orodja so nameščena
+[INFO] Začenjam varnostno kopiranje baze testna_baza
+[INFO] Varnostna kopija ustvarjena: testna_baza_backup_20260106_150000_UTC.sql (1.5 MB)
+[INFO] Šifriram datoteko za prejemnika: backup@example.com
+[INFO] Datoteka šifrirana: testna_baza_backup_20260106_150000_UTC.sql.gpg (1.2 MB)
+[INFO] Rotacija končana. Izbrisano 0 starih kopij
+
+✓ Varnostno kopiranje uspešno zaključeno!
+10. TESTIRANJE - Obnovi bazo
+bash# Najdi ime varnostne kopije
+ls varnostne_kopije/
+
+# Obnovi v testno bazo
+python3 skripta/obnova.py varnostne_kopije/testna_baza_backup_*.sql.gpg testna_obnova
+
+# Preveri, če je baza res obnovljena
+mysql -u test_uporabnik -p -e "SHOW DATABASES;"
+
+Možnost 2: PyCharm (NE PRIPOROČAM za ta projekt)
+Če res želiš uporabljati PyCharm:
+
+Odpri PyCharm
+File → Open → Izberi mapo mysql-varnostno-kopiranje
+Desni klik na varnostno_kopiranje.py → Run
+
+PROBLEM: PyCharm ne bo imel dostopa do sistemskih orodij (MySQL, GPG) razen če si v PyCharm terminalu nastaviš vse isto kot v Fedora terminalu.
+
+Avtomatizacija s cron (po testiranju)
+Ko vse deluje, dodaj v cron za avtomatsko izvajanje:
+bash# Odpri crontab
+crontab -e
+
+# Dodaj vrstico (vsak dan ob 2:00 zjutraj):
+0 2 * * * cd /home/TVOJE_IME/mysql-varnostno-kopiranje && /usr/bin/python3 skripta/varnostno_kopiranje.py >> /home/TVOJE_IME/mysql-varnostno-kopiranje/dnevniki/cron.log 2>&1
+Zamenjaj TVOJE_IME s svojim uporabniškim imenom (preveri z whoami).
