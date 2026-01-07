@@ -291,10 +291,12 @@ class VarnostnoKopiranje:
         pot_dnevnika = self.config['poti']['dnevniki']
         self.ime_dnevnika = nastavi_dnevnik(pot_dnevnika)
 
-        zapisi_v_dnevnik(self.ime_dnevnika)
-        zapisi_v_dnevnik(self.ime_dnevnika,
-                         "Začenjam postopek varnostnega kopiranja")
-        zapisi_v_dnevnik(self.ime_dnevnika)
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "═══════════════════════════════════════")
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "Začenjam postopek varnostnega kopiranja")
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "═══════════════════════════════════════")
 
         if not self.preveri_zahteve():
             return False
@@ -316,10 +318,12 @@ class VarnostnoKopiranje:
         # Rotiraj stare kopije
         self.rotiraj_varnostne_kopije()
 
-        zapisi_v_dnevnik(self.ime_dnevnika)
-        zapisi_v_dnevnik(self.ime_dnevnika,
-                         "Postopek varnostnega kopiranja končan")
-        zapisi_v_dnevnik(self.ime_dnevnika)
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "═══════════════════════════════════════")
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "Postopek varnostnega kopiranja končan")
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "═══════════════════════════════════════")
 
         return True
 
