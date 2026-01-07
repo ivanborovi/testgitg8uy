@@ -114,10 +114,12 @@ class ObnavljanjeBaze:
         pot_dnevnika = self.config['poti']['dnevniki']
         self.ime_dnevnika = nastavi_dnevnik(pot_dnevnika)
 
-        zapisi_v_dnevnik(self.ime_dnevnika)
-        zapisi_v_dnevnik(self.ime_dnevnika,
-                         "Začenjam postopek obnavljanja baze")
-        zapisi_v_dnevnik(self.ime_dnevnika)
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "═══════════════════════════════════")
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "Začenjam postopek obnavljanja baze")
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "═══════════════════════════════════")
 
         pot_sql = self.desifriraj_datoteko(pot_varnostne_kopije)
         if not pot_sql:
@@ -130,10 +132,12 @@ class ObnavljanjeBaze:
             zapisi_v_dnevnik(self.ime_dnevnika,
                              "Dešifrirana datoteka izbrisana iz varnostnih razlogov")
 
-        zapisi_v_dnevnik(self.ime_dnevnika)
-        zapisi_v_dnevnik(self.ime_dnevnika,
-                         "Postopek obnavljanja koncan")
-        zapisi_v_dnevnik(self.ime_dnevnika)
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "═══════════════════════════════════")
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "Postopek obnavljanja končan")
+        zapisi_v_dnevnik(self.ime_dnevnika, 
+                        "═══════════════════════════════════")
 
         return uspeh
 
